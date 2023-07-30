@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery-worker-deployment
+  labels:
+    component: dwse-celery-worker
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: dwse-celery-worker
+  template:
+    metadata:
+      labels:
+        component: dwse-celery-worker
+    spec:
+      containers:
+      - name: celery-worker
+        image: your-docker-username/dwse-celery-worker:latest
+        env:
+        - name: BROKER_URL
+          value: "pyamqp://guest:guest@rabbitmq-service:5672//"
+        - name: RESULT_BACKEND
+          value: "db+postgresql://db_user:db_pass@db-service:5432/dwse_db"
+        command: ["celery", "-A", "your_project_name", "worker", "--loglevel=info"]
+      imagePullSecrets:
+      - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: celery-worker-service
+spec:
+  selector:
+    component: dwse-celery-worker
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: ClusterIP

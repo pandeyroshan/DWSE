@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-deployment
+  labels:
+    app: dwse-fastapi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dwse-fastapi
+  template:
+    metadata:
+      labels:
+        app: dwse-fastapi
+    spec:
+      containers:
+      - name: fastapi
+        image: your-docker-username/dwse-fastapi:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          value: postgresql://db_user:db_pass@db-service:5432/dwse_db
+        - name: CELERY_BROKER_URL
+          value: pyamqp://guest:guest@rabbitmq-service:5672//
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+      imagePullSecrets:
+      - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service
+spec:
+  selector:
+    app: dwse-fastapi
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: LoadBalancer
