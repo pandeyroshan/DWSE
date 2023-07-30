@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rabbitmq-deployment
+  name: redis-deployment
   labels:
-    app: dwse-rabbitmq
+    app: dwse-redis
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dwse-rabbitmq
+      app: dwse-redis
   template:
     metadata:
       labels:
-        app: dwse-rabbitmq
+        app: dwse-redis
     spec:
       containers:
-      - name: rabbitmq
-        image: rabbitmq:management
+      - name: redis
+        image: redis:7
         ports:
         - containerPort: 5672
         - containerPort: 15672
@@ -33,17 +33,16 @@ spec:
             command:
             - sh
             - -c
-            - "rabbitmq-diagnostics ping"
           initialDelaySeconds: 20
           periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmq-service
+  name: redis-service
 spec:
   selector:
-    app: dwse-rabbitmq
+    app: dwse-redis
   ports:
     - name: amqp
       protocol: TCP

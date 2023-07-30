@@ -1,3 +1,0 @@
-name: my_fastapi_project
-packages:
-- path: app

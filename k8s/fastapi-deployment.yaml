@@ -21,9 +21,9 @@ spec:
         - containerPort: 8000
         env:
         - name: DATABASE_URL
-          value: postgresql://db_user:db_pass@db-service:5432/dwse_db
+          value: postgresql://postgres:postgres@db:5432/dwse_db
         - name: CELERY_BROKER_URL
-          value: pyamqp://guest:guest@rabbitmq-service:5672//
+          value: redis://redis:6379/0
         readinessProbe:
           httpGet:
             path: /health

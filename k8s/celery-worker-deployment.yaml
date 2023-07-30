@@ -19,10 +19,10 @@ spec:
         image: your-docker-username/dwse-celery-worker:latest
         env:
         - name: BROKER_URL
-          value: "pyamqp://guest:guest@rabbitmq-service:5672//"
+          value: "redis://redis:6379/0"
         - name: RESULT_BACKEND
-          value: "db+postgresql://db_user:db_pass@db-service:5432/dwse_db"
-        command: ["celery", "-A", "your_project_name", "worker", "--loglevel=info"]
+          value: "redis://redis:6379/0"
+        command: celery -A worker.celery worker --loglevel=info --logfile=logs/celery.log
       imagePullSecrets:
       - name: regcred
 ---
