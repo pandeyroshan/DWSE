@@ -17,3 +17,4 @@ Go to [http://localhost:8004](http://localhost:8004) to run the tasks and click 
 * FastAPI
 * redis
 * pytest
+* Docker
